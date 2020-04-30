@@ -25,7 +25,7 @@ async def on_ready():
     firebase_server.register_unknown_users(client.users)
     # ログイン時にルームのメンバーを登録する
     firebase_server.register_unknown_room_members(client.users, room_id)
-#    await send_dm_all_user(client.users, "お前は誰だ")
+#    await send_dm_all_user(client.users, "")
 
 # メッセージ受信時に動作する処理
 @client.event
@@ -35,7 +35,7 @@ async def on_message(message):
         return
     
     firebase_server.register_unknown_user(message.author)
-    firebase_server.register_unknown_user(message.author)
+    firebase_server.register_unknown_room_member(message.author, room_id)
 
     dm = await message.author.create_dm()
     await dm.send(message.content)
