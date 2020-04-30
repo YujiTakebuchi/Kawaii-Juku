@@ -140,7 +140,6 @@ def check_is_user_registered(discord_id) :
     return False
 
 
-<<<<<<< HEAD
 # test
 #register_room('yahho-')
 #
@@ -149,7 +148,6 @@ def check_is_user_registered(discord_id) :
 #for room in get_all_room() :
 #    print(room.id)
 
-=======
 # テスト用
 def test(discoId,comment):
     user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
@@ -162,4 +160,3 @@ def test(discoId,comment):
     print(user_id)
     print(room_id)
     print(comment)
->>>>>>> remotes/upstream/feature/marge_code
