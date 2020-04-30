@@ -48,30 +48,40 @@ def delete_user(id) :
 
 # 未登録User確認
 
-def register_unknown_user(user) :
+def register_unknown_user(discord_user) :
     
-    print(user.id)
-    print(user.name)
-    if (not check_is_user_registered(user.id)) :
-        print(user.id)
-        register_user(user.id, '', DISCORD, user.name)
+    if (not check_is_user_registered(discord_user.id)) :
+        print('unknown_user', discord_user.id)
+        print('unknown_user', discord_user.name)
+        register_user(discord_user.id, '', DISCORD, discord_user.name)
 
 
-def register_unknown_users(users) :
+def register_unknown_users(discord_users) :
     
-    for user in users :
-        register_unknown_user(user)
+    for discord_user in discord_users :
+        register_unknown_user(discord_user)
 
 
+# discord_idから対応するユーザーがユーザードキュメントに登録されているかどうか確かめる
+# 登録されている場合True, されていない場合False
 def check_is_user_registered(discord_id) :
     
+    if (search_user_by_discord(discord_id) != None) :
+        return True
+
+    return False
+
+# discord_idに対応するユーザーをユーザードキュメントから取得する
+def search_user_by_discord(discord_id) :
     for user in get_all_user() :
-        if discord_id == user.to_dict().get('discordId') :
-            return True
+        # discordアカウント以外のデータが取れてしまった時の回避
+        if user.to_dict().get('accountType') == TWITTER or user.to_dict().get('accountType') == '':
+            return None
 
-return False
+        if user.to_dict().get('discordId') == discord_id :
+            return user
 
-
+    return None
 
 # Comment登録
 
@@ -85,12 +95,7 @@ return False
 
 # RoomMember登録
 # デフォルトのユーザー登録時はブロックも管理者権限もなし
-def register_room_member_default(user_id, room_id):
-    
-    register_room_member(user_id, room_id, False, False)
-
-
-def register_room_member(user_id, room_id, is_blocked, is_admin):
+def register_room_member(user_id, room_id, is_blocked=False, is_admin=False):
     
     doc_ref = db.collection(u'RoomMember').document()
     doc_ref.set({
@@ -111,8 +116,8 @@ def get_all_room_member() :
 
 # RoomMember更新
 def edit_room_member(id, user_id, room_id, is_blocked, is_admin) :
-    room_doc = db.collection(u'RoomMember').document(id)
-    room_doc.update({
+    room_member_doc = db.collection(u'RoomMember').document(id)
+    room_member_doc.update({
                     u'userId': user_id,
                     u'roomId': room_id,
                     u'isBlocked': is_blocked,
@@ -126,11 +131,45 @@ def delete_room_member(id) :
 
 # メンバーブロック
 def block_room_member(id) :
-    room_doc = db.collection(u'RoomMember').document(id)
+    room_member_doc = db.collection(u'RoomMember').document(id)
     # is_blockedの値だけTrueに変更
-    room_doc.update({
+    room_member_doc.update({
                     u'isBlocked': True
                     })
+
+
+def register_unknown_room_member(discord_user, room_id) :
+    
+    user = search_user_by_discord(discord_user.id)
+    # userが空だった場合はぬるぽ(python上の言い方知らん＾＾)を避けるために処理しない
+    if user != None :
+        if not check_is_room_member_registered(user.id, room_id) :
+            print('unknown_room_member', discord_user.id)
+            print('unknown_room_member', discord_user.name)
+            register_room_member(user.id, room_id)
+
+
+def register_unknown_room_members(discord_users, room_id) :
+    
+    for discord_user in discord_users :
+        register_unknown_room_member(discord_user, room_id)
+
+
+
+# discord_idから対応するユーザーがユーザードキュメントに登録されているかどうか確かめる
+# 登録されている場合True, されていない場合False
+def check_is_room_member_registered(discord_id, room_id) :
+    
+    user = search_user_by_discord(discord_id)
+    if user == None :
+        return False
+    
+    for room_member in get_all_room_member() :
+        if  room_member.to_dict().get('userId') == user.id and room_member.to_dict().get('roomId') == 1:
+            return True
+
+    return False
+
 
 
 # Room登録
@@ -164,7 +203,7 @@ def delete_room(id) :
 
 
 # test
-register_room_member('yahho-')
+#register_room_member('yahho-')
 #
 #delete_room('sEpJangb0GchcuyAteFM')
 #
