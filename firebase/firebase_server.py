@@ -24,6 +24,7 @@ def register_user(id, discordId, twitterId, accountType, name):
 
 # User取得
 
+
 # User更新
 
 # User削除
@@ -76,5 +77,6 @@ def register_unknown_user(discord_id, name):
     if (check_is_user_registered(discord_id)):
 
     else :
+
 
 

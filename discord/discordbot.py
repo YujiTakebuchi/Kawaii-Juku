@@ -1,4 +1,5 @@
 # インストールした discord.py を読み込む
+import os
 import discord
 import time
 
@@ -8,7 +9,7 @@ sys.path.append('..')
 from firebase import firebase_server
 
 # 自分のBotのアクセストークンに置き換えてください
-TOKEN = 'NzAyMTQ2MzAxMjg2MDIzMTc4.Xp70xg.MJnmV8tBlWJn1m0XXn5_uH-dT2Q'
+TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 
 # 接続に必要なオブジェクトを生成
 client = discord.Client()
