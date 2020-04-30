@@ -69,7 +69,7 @@ def check_is_user_registered(discord_id) :
         if discord_id == user.to_dict().get('discordId') :
             return True
 
-return False
+    return False
 
 
 
@@ -231,7 +231,7 @@ def check_is_user_registered(discord_id) :
 
 
 # test
-register_room_member('yahho-')
+#register_room_member('yahho-')
 #
 #delete_room('sEpJangb0GchcuyAteFM')
 #
