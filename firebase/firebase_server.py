@@ -13,7 +13,7 @@ db = firestore.client()
 
 # User登録
 def register_user(discordId, twitterId, accountType, name):
-    
+
     doc_ref = db.collection(u'User').document()
     doc_ref.set({
                 u'id': doc_ref.id,
@@ -36,7 +36,7 @@ def get_all_user() :
 # コメント登録用の関数
 def comment_regist(discoId,comment): # discoId:message.author.idでコメント発言者のdiscoIdを確認！
     user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
-    
+
     for doc in user_doc:
         user_id = doc.get('id')
     roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==',user_id).stream()
@@ -46,7 +46,7 @@ def comment_regist(discoId,comment): # discoId:message.author.idでコメント�
     doc_ref = db.collection(u'Comment').document()
     doc_ref.set({
                 u'comment': comment,
-                u'id': user_id, # 発言者のid
+                u'id': doc_ref.id, # 発言者のid
                 u'roomId': room_id,
                 u'userId': user_id
                 })
@@ -65,7 +65,7 @@ def delete_comment(comment):
 # コメントをunityで表示
 def comment_display(discoId,comment):
     comment_doc = db.collection(u'Comment').stream()
-    
+
     for doc in docs:
         print(u'{} => {}'.format(doc.id, doc.to_dict()))
 
@@ -77,28 +77,35 @@ def comment_edit(before_comment,after_comment):
         edit_doc.update({u'comment': after_comment})
 
 
-# RoomMember登録
-def register_room_member(id, user_id, room_id):
-    
-    register_user(id, user_id, room_id, False, False)
 
+# Room登録
 
-def register_room_member(user_id, room_id, is_blocked, is_admin):
-    
-    doc_ref = db.collection(u'RoomMember').document()
+def register_room(name) :
+
+    doc_ref = db.collection(u'Room').document()
     doc_ref.set({
                 u'id': doc_ref.id,
-                u'userId': user_id,
-                u'roomId': room_id,
-                u'isBlocked': is_blocked,
-                u'isAdmin': is_admin
+                u'name': name
                 })
 
-# RoomMember取得
+# Room取得
+def get_room(id) :
+    doc_ref = db.collection(u'Room').document()
+    return doc_ref.get(id)
 
-# RoomMember更新
+def get_all_room() :
+    return db.collection(u'Room').stream()
 
-# RoomMember削除
+# Room更新
+def edit_room(id, name) :
+    room_doc = db.collection(u'Room').document(id)
+    room_doc.update({
+                    u'name': name
+                    })
+
+# Room削除
+def delete_room(id) :
+    db.collection(u'Room').document(id).delete()
 
 
 # 未登録User確認
@@ -110,7 +117,7 @@ def register_room_member(user_id, room_id, is_blocked, is_admin):
 #        register_user(discord_id, '', DISCORD, name)
 
 def register_unknown_user(user) :
-    
+
         print(user.id)
         print(user.name)
         if (not check_is_user_registered(user.id)) :
@@ -119,7 +126,7 @@ def register_unknown_user(user) :
 
 
 def register_unknown_users(users) :
-    
+
     for user in users :
         register_unknown_user(user)
 
@@ -133,10 +140,20 @@ def check_is_user_registered(discord_id) :
     return False
 
 
+<<<<<<< HEAD
+# test
+#register_room('yahho-')
+#
+#delete_room('sEpJangb0GchcuyAteFM')
+#
+#for room in get_all_room() :
+#    print(room.id)
+
+=======
 # テスト用
 def test(discoId,comment):
     user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
-    
+
     for doc in user_doc:
         user_id = doc.get('id')
     roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==',user_id).stream()
@@ -145,3 +162,4 @@ def test(discoId,comment):
     print(user_id)
     print(room_id)
     print(comment)
+>>>>>>> remotes/upstream/feature/marge_code
