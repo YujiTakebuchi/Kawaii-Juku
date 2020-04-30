@@ -20,7 +20,8 @@ client = discord.Client()
 async def on_ready():
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')
-    await send_dm_all_user(client.users, "お前は誰だ")
+    firebase_server.register_unknown_users(client.users)
+#    await send_dm_all_user(client.users, "お前は誰だ")
 
 # メッセージ受信時に動作する処理
 @client.event
@@ -29,21 +30,24 @@ async def on_message(message):
     if message.author.bot:
         return
     
-#    if firebase_server.check_is_users_registered(
+    firebase_server.register_unknown_user(message.author)
 
     dm = await message.author.create_dm()
     await dm.send(message.content)
 
 
     print(message.content)
-    firebase_server.register_unknown_user('test#99999999', 'unknown')
-    firebase_server.register_unknown_user('test#0000', 'known')
 
     # 「/neko」と発言したら「にゃーん」が返る処理
-    if message.content == '/neko':
-        await message.channel.send('にゃーん')
+#    if message.content == '/neko':
+#        await message.channel.send('にゃーん')
 
 
+
+
+
+
+# 全員へのDMテスト
 async def send_dm_all_user(users, message):
     for user in users:
         print(user.id)
