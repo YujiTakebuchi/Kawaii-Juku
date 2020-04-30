@@ -35,6 +35,9 @@ async def on_message(message):
     dm = await message.author.create_dm()
     await dm.send(message.content)
 
+    #firebase_server.comment_regist(message.author.id, message)
+    firebase_server.comment_regist(message.author, message.content)
+
 
     print(message.content)
 
@@ -42,6 +45,18 @@ async def on_message(message):
 #    if message.content == '/neko':
 #        await message.channel.send('にゃーん')
 
+
+# メッセージ削除時に動作する処理
+@client.event
+async def on_message_delete(message):
+    if message.author.bot:
+        return
+    firebase_server.delete_comment(message.content)
+
+# メッセージ変更時に動作する処理
+@client.event
+async def on_message_edit(before_message, after_message):
+    firebase_server.comment_edit(before_message.content,after_message.content)
 
 
 

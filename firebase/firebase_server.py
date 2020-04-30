@@ -13,7 +13,7 @@ db = firestore.client()
 
 # User登録
 def register_user(discordId, twitterId, accountType, name):
-    
+
     doc_ref = db.collection(u'User').document()
     doc_ref.set({
                 u'id': doc_ref.id,
@@ -32,20 +32,56 @@ def get_all_user() :
 # User削除
 
 
-# Comment登録
+# コメントデータの追加
+# コメント登録用の関数
+def comment_regist(discoId,comment): # discoId:message.author.idでコメント発言者のdiscoIdを確認！
+    user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
 
-# Comment取得
+    for doc in user_doc:
+        user_id = doc.get('id')
+    roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==',user_id).stream()
+    for doc in roommember_doc:
+        room_id = doc.get('roomId')
 
-# Comment更新
+    doc_ref = db.collection(u'Comment').document()
+    doc_ref.set({
+                u'comment': comment,
+                u'id': doc_ref.id, # 発言者のid
+                u'roomId': room_id,
+                u'userId': user_id
+                })
 
-# Comment削除
+# コメントデータの削除
+## delete_comment:デリート対象のコメント
+def delete_comment(comment):
+    comment_doc = db.collection(u'Comment').where(u'comment', u'==', u'{}'.format(comment)).stream()
+    for doc in comment_doc:
+        doc_id = doc.id
+        db.collection(u'Comment').document(u'{}'.format(doc_id)).delete()
+    print('deleted!')
+
+
+# コメントデータの取得、表示
+# コメントをunityで表示
+def comment_display(discoId,comment):
+    comment_doc = db.collection(u'Comment').stream()
+
+    for doc in docs:
+        print(u'{} => {}'.format(doc.id, doc.to_dict()))
+
+# コメントデータ更新
+def comment_edit(before_comment,after_comment):
+    comment_doc = db.collection(u'Comment').where(u'comment', u'==', u'{}'.format(before_comment)).stream()
+    for doc in comment_doc:
+        edit_doc = db.collection(u'Comment').document(u'{}'.format(doc.id))
+        edit_doc.update({u'comment': after_comment})
 
 
 
 # Room登録
 
 def register_room(name) :
-    
+
     doc_ref = db.collection(u'Room').document()
     doc_ref.set({
                 u'id': doc_ref.id,
@@ -81,7 +117,7 @@ def delete_room(id) :
 #        register_user(discord_id, '', DISCORD, name)
 
 def register_unknown_user(user) :
-    
+
         print(user.id)
         print(user.name)
         if (not check_is_user_registered(user.id)) :
@@ -90,7 +126,7 @@ def register_unknown_user(user) :
 
 
 def register_unknown_users(users) :
-    
+
     for user in users :
         register_unknown_user(user)
 
@@ -104,6 +140,7 @@ def check_is_user_registered(discord_id) :
     return False
 
 
+<<<<<<< HEAD
 # test
 #register_room('yahho-')
 #
@@ -112,3 +149,17 @@ def check_is_user_registered(discord_id) :
 #for room in get_all_room() :
 #    print(room.id)
 
+=======
+# テスト用
+def test(discoId,comment):
+    user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
+
+    for doc in user_doc:
+        user_id = doc.get('id')
+    roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==',user_id).stream()
+    for doc in roommember_doc:
+        room_id = doc.get('roomId')
+    print(user_id)
+    print(room_id)
+    print(comment)
+>>>>>>> remotes/upstream/feature/marge_code
