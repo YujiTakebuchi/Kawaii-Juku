@@ -41,28 +41,35 @@ def get_all_user() :
 # Comment削除
 
 
-# RoomMember登録
-def register_room_member(id, user_id, room_id):
-    
-    register_user(id, user_id, room_id, False, False)
 
+# Room登録
 
-def register_room_member(user_id, room_id, is_blocked, is_admin):
+def register_room(name) :
     
-    doc_ref = db.collection(u'RoomMember').document()
+    doc_ref = db.collection(u'Room').document()
     doc_ref.set({
                 u'id': doc_ref.id,
-                u'userId': user_id,
-                u'roomId': room_id,
-                u'isBlocked': is_blocked,
-                u'isAdmin': is_admin
+                u'name': name
                 })
 
-# RoomMember取得
+# Room取得
+def get_room(id) :
+    doc_ref = db.collection(u'Room').document()
+    return doc_ref.get(id)
 
-# RoomMember更新
+def get_all_room() :
+    return db.collection(u'Room').stream()
 
-# RoomMember削除
+# Room更新
+def edit_room(id, name) :
+    room_doc = db.collection(u'Room').document(id)
+    room_doc.update({
+                    u'name': name
+                    })
+
+# Room削除
+def delete_room(id) :
+    db.collection(u'Room').document(id).delete()
 
 
 # 未登録User確認
@@ -95,4 +102,13 @@ def check_is_user_registered(discord_id) :
             return True
 
     return False
+
+
+# test
+#register_room('yahho-')
+#
+#delete_room('sEpJangb0GchcuyAteFM')
+#
+#for room in get_all_room() :
+#    print(room.id)
 
