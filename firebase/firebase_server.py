@@ -23,6 +23,7 @@ def register_user(id, discordId, twitterId, accountType, name):
 
 # User取得
 
+
 # User更新
 
 # User削除
@@ -47,4 +48,5 @@ def register_user(id, discordId, twitterId, accountType, name):
 
 
 # 未登録User登録
+
 
