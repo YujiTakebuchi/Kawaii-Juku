@@ -145,7 +145,7 @@ def register_unknown_room_member(discord_user, room_id) :
         if not check_is_room_member_registered(str(discord_user.id), room_id) :
             print('unknown_room_member', str(discord_user.id))
             print('unknown_room_member', discord_user.name)
-            register_room_member(user.id, room_id)
+            register_room_member(discord_user.id, room_id)
 
 
 def register_unknown_room_members(discord_users, room_id) :
