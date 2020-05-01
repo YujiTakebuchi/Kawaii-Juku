@@ -50,10 +50,10 @@ def delete_user(id) :
 
 def register_unknown_user(discord_user) :
     
-    if (not check_is_user_registered(discord_user.id)) :
-        print('unknown_user', discord_user.id)
+    if (not check_is_user_registered(str(discord_user.id))) :
+        print('unknown_user', str(discord_user.id))
         print('unknown_user', discord_user.name)
-        register_user(discord_user.id, '', DISCORD, discord_user.name)
+        register_user(str(discord_user.id), '', DISCORD, discord_user.name)
 
 
 def register_unknown_users(discord_users) :
@@ -140,11 +140,10 @@ def block_room_member(id) :
 
 def register_unknown_room_member(discord_user, room_id) :
     
-    user = search_user_by_discord(discord_user.id)
     # userが空だった場合はぬるぽ(python上の言い方知らん＾＾)を避けるために処理しない
-    if user != None :
-        if not check_is_room_member_registered(user.id, room_id) :
-            print('unknown_room_member', discord_user.id)
+    if discord_user != None :
+        if not check_is_room_member_registered(str(discord_user.id), room_id) :
+            print('unknown_room_member', str(discord_user.id))
             print('unknown_room_member', discord_user.name)
             register_room_member(user.id, room_id)
 
