@@ -137,6 +137,30 @@ def block_room_member(id) :
                     u'isBlocked': True
                     })
 
+# メンバーブロック解除
+def unblock_room_member(id) :
+    room_member_doc = db.collection(u'RoomMember').document(id)
+    # is_blockedの値だけFalseに変更
+    room_member_doc.update({
+                           u'isBlocked': False
+                           })
+
+# メンバー管理者権限付与
+def assign_admin_room_member(id) :
+    room_member_doc = db.collection(u'RoomMember').document(id)
+    # is_adminの値だけTrueに変更
+    room_member_doc.update({
+                           u'isAdmin': True
+                           })
+
+# メンバー管理者権限剥奪
+def dismiss_admin_room_member(id) :
+    room_member_doc = db.collection(u'RoomMember').document(id)
+    # is_adminの値だけFalseに変更
+    room_member_doc.update({
+                           u'isAdmin': False
+                           })
+
 
 def register_unknown_room_member(discord_user, room_id) :
     
