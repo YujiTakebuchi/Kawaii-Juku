@@ -83,17 +83,20 @@ def search_user_by_discord(discord_id) :
 
     return None
 
+
 # Comment登録
 def comment_register(discordId,comment): # discoId:message.author.idでコメント発言者のdiscoIdを確認！
     user_doc = db.collection(u'User').where(u'discordId', u'==', u'{}'.format(discordId.id)).stream() # discoIdを元に発言者の情報を取得
     for doc in user_doc:
         user_id = doc.get('id')
     roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==', u'{}'.format(user_id)).stream()
+
     for doc in roommember_doc:
         room_id = doc.get('roomId')
 
     doc_ref = db.collection(u'Comment').document()
     doc_ref.set({
+
         u'comment': comment,
         u'id': doc_ref.id, # 発言者のid
         u'roomId': room_id,
@@ -125,6 +128,7 @@ def delete_comment(comment):
         doc_id = doc.id
         db.collection(u'Comment').document(u'{}'.format(doc_id)).delete()
     print('deleted!')
+
 
 
 # RoomMember登録
@@ -258,6 +262,37 @@ def edit_room(id, name) :
 def delete_room(id) :
     db.collection(u'Room').document(id).delete()
 
+# 未登録User確認
+
+#def register_unknown_user(discord_id, name) :
+#
+#    if (not check_is_user_registered(discord_id)) :
+#        print(discord_id)
+#        register_user(discord_id, '', DISCORD, name)
+
+def register_unknown_user(user) :
+
+        print(user.id)
+        print(user.name)
+        if (not check_is_user_registered(user.id)) :
+            print(user.id)
+            register_user(user.id, '', DISCORD, user.name)
+
+
+def register_unknown_users(users) :
+
+    for user in users :
+        register_unknown_user(user)
+
+
+def check_is_user_registered(discord_id) :
+
+    for user in get_all_user() :
+        if discord_id == user.to_dict().get('discordId') :
+            return True
+
+    return False
+
 
 # test
 #register_room_member('yahho-')
@@ -266,3 +301,19 @@ def delete_room(id) :
 #
 #for room in get_all_room() :
 #    print(room.id)
+<<<<<<< HEAD
+=======
+
+# テスト用
+def test(discoId,comment):
+    user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
+
+    for doc in user_doc:
+        user_id = doc.get('id')
+    roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==',user_id).stream()
+    for doc in roommember_doc:
+        room_id = doc.get('roomId')
+    print(user_id)
+    print(room_id)
+    print(comment)
+>>>>>>> 3062df4e053852765b20165f9a807a0f9db93bfd
