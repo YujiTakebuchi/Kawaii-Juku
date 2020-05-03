@@ -33,9 +33,10 @@ async def on_message(message):
     # メッセージ送信者がBotだった場合は無視する
     if message.author.bot:
         return
-    
+
     firebase_server.register_unknown_user(message.author)
     firebase_server.register_unknown_room_member(message.author, room_id)
+    firebase_server.comment_register(message.author,message.content)
 
     dm = await message.author.create_dm()
     await dm.send(message.content)
@@ -47,6 +48,19 @@ async def on_message(message):
 #    if message.content == '/neko':
 #        await message.channel.send('にゃーん')
 
+
+# メッセージ削除時に動作する処理
+@client.event
+async def on_message_delete(message):
+    if message.author.bot:
+        return
+
+    firebase_server.delete_comment(message.content)
+
+# メッセージ変更時に動作する処理
+@client.event
+async def on_message_edit(before_message, after_message):
+    firebase_server.comment_edit(before_message.content,after_message.content)
 
 
 
@@ -68,4 +82,3 @@ async def send_dm_to(user, message):
 
 # Botの起動とDiscordサーバーへの接続
 client.run(TOKEN)
-

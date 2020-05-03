@@ -13,11 +13,11 @@ db = firestore.client()
 
 # User登録
 def register_user(discord_id, twitter_id, account_type, name):
-    
+
     doc_ref = db.collection(u'User').document()
     doc_ref.set({
                 u'id': doc_ref.id,
-                u'discordId': discord_id,
+                u'discordId': str(discord_id),
                 u'twitterId': twitter_id,
                 u'accountType': account_type,
                 u'name': name
@@ -35,7 +35,7 @@ def get_all_user() :
 def edit_user(id, discord_id, twitter_id, account_type, name) :
     room_doc = db.collection(u'User').document(id)
     room_doc.update({
-                    u'discordId': discord_id,
+                    u'discordId': str(discord_id),
                     u'twitterId': twitter_id,
                     u'accountType': account_type,
                     u'name': name
@@ -49,15 +49,15 @@ def delete_user(id) :
 # 未登録User確認
 
 def register_unknown_user(discord_user) :
-    
-    if (not check_is_user_registered(str(discord_user.id))) :
+
+    if (not check_is_user_registered(discord_user.id)) :
         print('unknown_user', str(discord_user.id))
         print('unknown_user', discord_user.name)
-        register_user(str(discord_user.id), '', DISCORD, discord_user.name)
+        register_user(discord_user.id, '', DISCORD, discord_user.name)
 
 
 def register_unknown_users(discord_users) :
-    
+
     for discord_user in discord_users :
         register_unknown_user(discord_user)
 
@@ -65,7 +65,7 @@ def register_unknown_users(discord_users) :
 # discord_idから対応するユーザーがユーザードキュメントに登録されているかどうか確かめる
 # 登録されている場合True, されていない場合False
 def check_is_user_registered(discord_id) :
-    
+
     if (search_user_by_discord(discord_id) != None) :
         return True
 
@@ -78,25 +78,63 @@ def search_user_by_discord(discord_id) :
         if user.to_dict().get('accountType') == TWITTER or user.to_dict().get('accountType') == '':
             return None
 
-        if user.to_dict().get('discordId') == discord_id :
+        if user.to_dict().get('discordId') == str(discord_id) :
             return user
 
     return None
 
-# Comment登録
 
+# Comment登録
+def comment_register(discordId,comment): # discoId:message.author.idでコメント発言者のdiscoIdを確認！
+    user_doc = db.collection(u'User').where(u'discordId', u'==', u'{}'.format(discordId.id)).stream() # discoIdを元に発言者の情報を取得
+    for doc in user_doc:
+        user_id = doc.get('id')
+    roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==', u'{}'.format(user_id)).stream()
+
+    for doc in roommember_doc:
+        room_id = doc.get('roomId')
+
+    doc_ref = db.collection(u'Comment').document()
+    doc_ref.set({
+
+        u'comment': comment,
+        u'id': doc_ref.id, # 発言者のid
+        u'roomId': room_id,
+        u'userId': user_id
+        })
 # Comment取得
+def comment_display(discoId,comment):
+    comment_doc = db.collection(u'Comment').stream()
+
+    for doc in docs:
+        print(u'{} => {}'.format(doc.id, doc.to_dict()))
 
 # Comment更新
-
+def comment_edit(before_comment,after_comment):
+    user_doc = db.collection(u'User').where(u'discordId', u'==', u'{}'.format(before_comment.author.id)).stream()
+    for doc in user_doc:
+        user_id = doc.get('id')
+    comment_doc = db.collection(u'Comment').where(u'comment', u'==', u'{}'.format(before_comment.content)).where(u'userId', u'==', u'{}'.format(user_id)).stream()
+    for doc in comment_doc:
+        edit_doc = db.collection(u'Comment').document(u'{}'.format(doc.id))
+        edit_doc.update({u'comment': after_comment.content})
 # Comment削除
+def delete_comment(comment):
+    user_doc = db.collection(u'User').where(u'discordId', u'==', u'{}'.format(comment.author.id)).stream()
+    for doc in user_doc:
+        user_id = doc.get('id')
+    comment_doc = db.collection(u'Comment').where(u'comment', u'==', u'{}'.format(comment.content)).where(u'userId', u'==', u'{}'.format(user_id)).stream()
+    for doc in comment_doc:
+        doc_id = doc.id
+        db.collection(u'Comment').document(u'{}'.format(doc_id)).delete()
+    print('deleted!')
 
 
 
 # RoomMember登録
 # デフォルトのユーザー登録時はブロックも管理者権限もなし
 def register_room_member(user_id, room_id, is_blocked=False, is_admin=False):
-    
+
     doc_ref = db.collection(u'RoomMember').document()
     doc_ref.set({
                 u'id': doc_ref.id,
@@ -164,16 +202,17 @@ def dismiss_admin_room_member(id) :
 
 def register_unknown_room_member(discord_user, room_id) :
     
+    user = search_user_by_discord(discord_user.id)
     # userが空だった場合はぬるぽ(python上の言い方知らん＾＾)を避けるために処理しない
-    if discord_user != None :
-        if not check_is_room_member_registered(str(discord_user.id), room_id) :
-            print('unknown_room_member', str(discord_user.id))
+    if user != None :
+        if not check_is_room_member_registered(user, room_id) :
+            print('unknown_room_member', discord_user.id)
             print('unknown_room_member', discord_user.name)
-            register_room_member(discord_user.id, room_id)
+            register_room_member(user.id, room_id)
 
 
 def register_unknown_room_members(discord_users, room_id) :
-    
+
     for discord_user in discord_users :
         register_unknown_room_member(discord_user, room_id)
 
@@ -181,12 +220,11 @@ def register_unknown_room_members(discord_users, room_id) :
 
 # discord_idから対応するユーザーがユーザードキュメントに登録されているかどうか確かめる
 # 登録されている場合True, されていない場合False
-def check_is_room_member_registered(discord_id, room_id) :
-    
-    user = search_user_by_discord(discord_id)
+def check_is_room_member_registered(user, room_id) :
+
     if user == None :
         return False
-    
+
     for room_member in get_all_room_member() :
         if  room_member.to_dict().get('userId') == user.id and room_member.to_dict().get('roomId') == 1:
             return True
@@ -198,7 +236,7 @@ def check_is_room_member_registered(discord_id, room_id) :
 # Room登録
 
 def register_room(name) :
-    
+
     doc_ref = db.collection(u'Room').document()
     doc_ref.set({
                 u'id': doc_ref.id,
@@ -233,3 +271,15 @@ def delete_room(id) :
 #for room in get_all_room() :
 #    print(room.id)
 
+# テスト用
+def test(discoId,comment):
+    user_doc = db.collection(u'User').where(u'discoId', u'==', u'{}'.format(discoId)).stream() # discoIdを元に発言者の情報を取得
+
+    for doc in user_doc:
+        user_id = doc.get('id')
+    roommember_doc = db.collection(u'RoomMember').where(u'userId', u'==',user_id).stream()
+    for doc in roommember_doc:
+        room_id = doc.get('roomId')
+    print(user_id)
+    print(room_id)
+    print(comment)
