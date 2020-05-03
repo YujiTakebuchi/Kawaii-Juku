@@ -25,7 +25,8 @@ async def on_message(message):
         await message.channel.send('にゃーん')
 
     #firebase_admin_test.comment_regist(message.author.id, message)
-    firebase_admin_test.comment_regist(message.author, message.content)
+    firebase_admin_test.comment_register
+(message.author, message.content)
 
 # メッセージ削除時に動作する処理
 @client.event

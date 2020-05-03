@@ -41,9 +41,6 @@ async def on_message(message):
     dm = await message.author.create_dm()
     await dm.send(message.content)
 
-    #firebase_server.comment_regist(message.author.id, message)
-    firebase_server.comment_regist(message.author, message.content)
-
 
     print(message.content)
 
