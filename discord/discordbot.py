@@ -50,23 +50,14 @@ async def on_message(message):
     # 「/neko」と発言したら「にゃーん」が返る処理
 #    if message.content == '/neko':
 #        await message.channel.send('にゃーん')
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 3062df4e053852765b20165f9a807a0f9db93bfd
 # メッセージ削除時に動作する処理
 @client.event
 async def on_message_delete(message):
     if message.author.bot:
         return
-<<<<<<< HEAD
-    firebase_server.delete_comment(message)
-# メッセージ変更時に動作する処理
-@client.event
-async def on_message_edit(before_message, after_message):
-    firebase_server.comment_edit(before_message,after_message)
-=======
+
     firebase_server.delete_comment(message.content)
 
 # メッセージ変更時に動作する処理
@@ -74,7 +65,6 @@ async def on_message_edit(before_message, after_message):
 async def on_message_edit(before_message, after_message):
     firebase_server.comment_edit(before_message.content,after_message.content)
 
->>>>>>> 3062df4e053852765b20165f9a807a0f9db93bfd
 
 
 

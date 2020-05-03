@@ -301,8 +301,6 @@ def check_is_user_registered(discord_id) :
 #
 #for room in get_all_room() :
 #    print(room.id)
-<<<<<<< HEAD
-=======
 
 # テスト用
 def test(discoId,comment):
@@ -316,4 +314,3 @@ def test(discoId,comment):
     print(user_id)
     print(room_id)
     print(comment)
->>>>>>> 3062df4e053852765b20165f9a807a0f9db93bfd
