@@ -15,7 +15,7 @@ namespace discordbot
         private static async Task MainAsync()
         {
             var client = new DiscordSocketClient();
-            var token = Environment.GetEnvironmentVariable("DISCORD_BOT_TOKEN"); ;
+            var token = Environment.GetEnvironmentVariable("DISCORD_BOT_TOKEN");
 
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
@@ -33,6 +33,8 @@ namespace discordbot
             }
             await arg.Channel.SendMessageAsync(arg.Content);
             File.WriteAllText(@"C:\Users\Chamboo\UnityProjects\New Unity Project\Assets\comment.txt", arg.Content.ToString());
+            FirestoreCSharp firestoreCSharp = new FirestoreCSharp();
+            firestoreCSharp.registerUser("discordIDtest", "", FirestoreCSharp.DISCORD, "testUser");
 
             //DiscordbotCS.generateTextFile(arg.Content.ToString());
 
