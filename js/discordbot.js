@@ -10,9 +10,9 @@ client.on('message', message =>{
     if(message.author.bot){
         return;
    }
-//↓ここに後述のコードをコピペする↓
-writeUserData(message)
-//↑ここに後述のコードをコピペする↑
+
+writeCommentData(message)
+
 });
 
 // FIREBASEの処理！！！！！！！！！！！！！！！！！！！！！！！！！！！！
@@ -32,23 +32,18 @@ firebase.initializeApp({
 
 
 // 書き込み
-function writeUserData(message) {
+function writeCommentData(message) {
   console.log('function came');
   var comment = message.content
-  var id = message.id
-  var name = message.author
-    firebase.database().ref('comment/').push({
+  var id = message.author.id
+  var name = message.author.username
+  var isRead = false
+    firebase.database().ref('comment/' + message.id).set({ //setじゃなくてpushでもできる
       comment: comment,
       id: id,
-      name : name
+      name : name,
+      isRead : isRead
     });
 }
-
-  // 読み取り
-//   var userId = firebase.auth().currentUser.uid;
-// return firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-//   var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
-//   // ...
-// });
 
 client.login(token);
