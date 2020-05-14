@@ -1,7 +1,7 @@
 //ログイン処理
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const token = '';
+const token = process.env.DISCORD_BOT_TOKEN;
 client.on('ready', () => {
     console.log('ready...');
 });
@@ -20,7 +20,7 @@ writeUserData(message)
 // TODO: Replace with your project's config object
 var firebase = require("firebase-admin");
 
-var serviceAccount = require("./serviceAccountKey.json");
+var serviceAccount = require("../../serviceAccountKey.json");
 
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
