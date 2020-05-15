@@ -15,13 +15,13 @@ firebase.initializeApp({
 // Get a reference to the database service
 var database = firebase.database();
 var ref = database.ref('user/');
-//searchDiscordUserData("303199383397335040");
+writeUnknownDiscordUserData("303199383397335040");
 //searchDiscordUserData("shinki");
 
 //擬似ディスコード
-writeUnknownDiscordUserData('303199383397335040').then(value => {
-        console.log(value);
-    });
+//writeUnknownDiscordUserData('303199383397335040').then(value => {
+//        console.log(value);
+//    });
 //readUserData();
 
 // 書き込み
@@ -56,8 +56,10 @@ function readUserData() {
     });
 }
 
-async function writeUnknownDiscordUserData(discordId) {
-    const user = await searchDiscordUserData(discordId);
+function writeUnknownDiscordUserData(discordId) {
+    const user = async() => {
+         return await searchDiscordUserData(discordId);
+    }
     return user;
     //console.log("ひん");
     //console.log(user);
@@ -68,13 +70,15 @@ async function writeUnknownDiscordUserData(discordId) {
 }
 
 function searchDiscordUserData(discordId) {
-    return ref.orderByChild('discordId').startAt(discordId).endAt(discordId).once("value").then(snapshot => {
+    console.log("やあ");
+    ref.orderByChild('discordId').startAt(discordId).endAt(discordId).once("value").then(snapshot => {
         //console.log(snapshot.val())
         Object.keys(snapshot.val()).forEach(function(value){
-            console.log("やあ");
-            resolve(this[value]);
+            console.log(this[value]);
+            //resolve(this[value]);
         }, snapshot.val())
     }, function (errorObject) {
-        reject('ファイヤベースのエラー!!!');
+        console.log(errorObject);
+        //reject('ファイヤベースのエラー!!!');
     });
 }
