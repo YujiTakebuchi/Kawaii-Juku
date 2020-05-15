@@ -7,15 +7,15 @@ var firebase = require("firebase-admin");
 
 var serviceAccount = require("../../serviceAccountKey.json");
 
-firebase.initializeApp({
-  credential: firebase.credential.cert(serviceAccount),
-  databaseURL: "https://kawaii-juku.firebaseio.com"
-});
+// firebase.initializeApp({
+//   credential: firebase.credential.cert(serviceAccount),
+//   databaseURL: "https://kawaii-juku.firebaseio.com"
+// });
 
 // Get a reference to the database service
 var database = firebase.database();
 var ref = database.ref('user/');
-writeUnknownDiscordUserData("303199383397335040");
+//writeUnknownDiscordUserData("303199383397335040");
 //searchDiscordUserData("shinki");
 
 //擬似ディスコード
@@ -28,7 +28,7 @@ writeUnknownDiscordUserData("303199383397335040");
 function writeUserData(discordId, twitterId, accountType, name) {
   console.log('function came');
     ref.set({ //setじゃなくてpushでもできる
-      id: ref.id,
+      id: discordId.toString(),
       discordId : discordId.toString(),
       twitterId : twitterId,
       accountType : accountType,
@@ -44,7 +44,7 @@ function writeTwitterUserData(twitterId, name) {
   writeUserData("", twitterId, TWITTER, name);
 }
 
-function writeUnknownDiscordUserData(discordId, name) {
+function writeDiscordUserData(discordId, name) {
     writeUserData(discordId, "", DISCORD, name);
 }
 
@@ -56,11 +56,29 @@ function readUserData() {
     });
 }
 
-function writeUnknownDiscordUserData(discordId) {
-    const user = async() => {
-         return await searchDiscordUserData(discordId);
-    }
-    return user;
+function writeUnknownDiscordUserData(discordId, name) {
+    console.log("やあ");
+    ref.orderByChild('discordId').startAt(discordId).endAt(discordId).once("value").then(snapshot => {
+        //console.log(snapshot.val())
+        Object.keys(snapshot.val()).forEach(function(value){
+            console.log(this[value]);
+            return;
+            //resolve(this[value]);
+        }, snapshot.val())
+    }, function (errorObject) {
+        console.log(errorObject);
+        //reject('ファイヤベースのエラー!!!');
+    });
+
+    writeDiscordUserData(discordId, name);
+    return;
+
+
+
+    // const user = async() => {
+    //      return await searchDiscordUserData(discordId);
+    // }
+    // return user;
     //console.log("ひん");
     //console.log(user);
     //if (user != null) {
