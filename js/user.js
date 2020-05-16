@@ -9,7 +9,6 @@ exports.initializeUser = function initializeUser(database) {
 }
 
 // 書き込み
-
 function writeUserData(discordId, twitterId, accountType, name) {
     console.log('function came');
     db.ref('user/' + discordId).set({ //setじゃなくてpushでもできる
