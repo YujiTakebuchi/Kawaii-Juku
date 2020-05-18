@@ -3,7 +3,7 @@
 // TODO: Replace with your project's config object
 var db;
 
-exports.initializeUser = function initializeUser(database) {
+exports.initializeComment = function initializeComment(database) {
     db = database;
 }
 
