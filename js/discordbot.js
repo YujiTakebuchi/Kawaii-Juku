@@ -7,6 +7,7 @@ const serviceAccount = require("../../serviceAccountKeyKari.json");
 const roomJS = require('./room.js');
 const userJS = require('./user.js');
 const commentJS = require('./comment.js');
+const templateMessages = require('./templateMessages.js');
 
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_TOKEN;
@@ -28,6 +29,10 @@ client.on('ready', () => {
   roomJS.initializeRoom(database);
   userJS.initializeUser(database);
   commentJS.initializeComment(database);
+    
+  client.users.cache.filter(user => !user.bot).forEach(notBotUser =>
+                                                       notBotUser.send(templateMessages.WELLCOME_FRESHERS)
+                                                       );
 
   // 準備完了
   console.log('ready...');
