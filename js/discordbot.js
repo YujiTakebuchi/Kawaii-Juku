@@ -6,6 +6,7 @@ const serviceAccount = require("../../serviceAccountKey.json");
 // テーブルごとのメソッドを持ったjsの読み込み(他のテーブルを作った場合はここで読み込む)
 const userJS = require('./user.js');
 const commentJS = require('./comment.js');
+const templateMessages = require('./templateMessages.js');
 
 const client = new Discord.Client();
 const token = process.env.DISCORD_BOT_TOKEN;
@@ -22,11 +23,16 @@ client.on('ready', () => {
     databaseURL: "https://kawaii-juku.firebaseio.com"
   });
   
-  database = firebase.database();
+  const database = firebase.database();
 
   // 別ファイルでファイヤベースを利用するための初期化(他のテーブルを作った場合はここで初期化する)
   userJS.initializeUser(database);
   commentJS.initializeUser(database);
+
+  // 起動時にDMを送ることでDMでもコメントを送れることを通知する
+  client.users.cache.filter(user => !user.bot).forEach(notBotUser =>
+                                                       notBotUser.send(templateMessages.WELLCOME_FRESHERS)
+                                                       );
 
   // 準備完了
   console.log('ready...');
