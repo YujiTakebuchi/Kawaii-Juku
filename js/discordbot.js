@@ -34,6 +34,11 @@ client.on('ready', () => {
                                                        notBotUser.send(templateMessages.WELLCOME_FRESHERS)
                                                        );
 
+  // 起動時にDMを送ることでDMでもコメントを送れることを通知する
+  client.users.cache.filter(user => !user.bot).forEach(notBotUser =>
+                                                       notBotUser.send(templateMessages.WELLCOME_FRESHERS)
+                                                       );
+
   // 準備完了
   console.log('ready...');
 });
