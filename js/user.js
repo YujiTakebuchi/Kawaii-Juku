@@ -41,7 +41,9 @@ exports.readUserData = function readUserData() {
 
 // discordIdでのユーザー検索
 exports.searchDiscordUserData = function searchDiscordUserData(discordId) {
-    db.ref('User/').orderByChild("discordId").equalTo(discordId).once("value", function(snapshot) {
+    db.ref('User/' + discordId).once("value", function(snapshot) {
         return snapshot.val();
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
     });
 }

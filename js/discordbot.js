@@ -50,16 +50,22 @@ client.on('message', message =>{
   var channel = message.channel;
   var author = message.author;
   var roomMemberId = channel.id + author.id;
+  var isActive = roomJS.isActiveRoom(channel.id);
     
   //Bot自身の発言を無視する呪い
   if(author.bot){
     return;
   }
 
-  roomJS.writeRoomData(channel.id, channel.guild.name);
-  userJS.writeDiscordUserData(author.id, author.username);
-  roomMemberJS.writeRoomMemberData(channel.id, author.id);
-  commentJS.writeCommentData(message.id, roomMemberId, message.content);
+  if (message.content === '/start') {
+    isActive = roomMemberJS.isAdminRoomMember(roomMemberId);
+      roomJS.updateIsActive(channel.id, isActive);
+  } else if (isActive) {
+    roomJS.writeRoomData(channel.id, channel.guild.name);
+    userJS.writeDiscordUserData(author.id, author.username);
+    roomMemberJS.writeRoomMemberData(channel.id, author.id);
+    commentJS.writeCommentData(message.id, roomMemberId, message.content);
+  }
 });
 
 client.login(token);

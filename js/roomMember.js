@@ -15,3 +15,15 @@ exports.writeRoomMemberData = function writeRoomMemberData(roomId, userId, isBlo
         isAdmin : isAdmin
     });
 }
+
+/***
+ * 指定したIDのルームメンバーが管理者であるかを確認
+ * @param {roomMemberId} 管理者かどうかを確認するルームメンバーのID
+ * @return {Boolean} 管理者かどうか
+ */
+exports.isAdminRoomMember = function isAdminRoomMember(roomMemberId) {
+    console.log('is Admin?');
+    db.ref('RoomMember/' + roomMemberId).once("value", function(snapshot) {
+        return snapshot.val().isAdmin;
+    });
+}
