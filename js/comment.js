@@ -8,16 +8,12 @@ exports.initializeComment = function initializeComment(database) {
 }
 
 // 書き込み
-exports.writeCommentData = function writeCommentData(message) {
-    console.log('function came');
-    var comment = message.content
-    var id = message.author.id
-    var name = message.author.username
-    var isRead = false
-      db.ref('comment/' + message.id).set({ //setじゃなくてpushでもできる
-        comment: comment,
-        id: id,
-        name : name,
+exports.writeCommentData = function writeCommentData(commentId, roomMemberId, comment, isRead = false) {
+    console.log('wrote comment');
+    
+    db.ref('Comment/' + commentId).set({ //setじゃなくてpushでもできる
+        roomMemberId : roomMemberId,
+        comment : comment,
         isRead : isRead
       });
   }

@@ -10,8 +10,8 @@ exports.initializeUser = function initializeUser(database) {
 
 // 書き込み
 function writeUserData(discordId, twitterId, accountType, name) {
-    console.log('function came');
-    db.ref('user/' + discordId).set({ //setじゃなくてpushでもできる
+    console.log('wrote user');
+    db.ref('User/' + discordId).set({ //setじゃなくてpushでもできる
         discordId : discordId.toString(),
         twitterId : twitterId,
         accountType : accountType,
@@ -32,7 +32,7 @@ exports.writeDiscordUserData = function writeDiscordUserData(discordId, name) {
 }
 
 exports.readUserData = function readUserData() {
-    db.ref("user/").once("value", function(snapshot) {
+    db.ref('User/').once("value", function(snapshot) {
       return snapshot.val();
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
@@ -41,7 +41,7 @@ exports.readUserData = function readUserData() {
 
 // discordIdでのユーザー検索
 exports.searchDiscordUserData = function searchDiscordUserData(discordId) {
-    db.ref('user/').orderByChild("discordId").equalTo(discordId).once("value", function(snapshot) {
+    db.ref('User/').orderByChild("discordId").equalTo(discordId).once("value", function(snapshot) {
         return snapshot.val();
     });
 }

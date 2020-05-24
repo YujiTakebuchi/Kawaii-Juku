@@ -7,14 +7,14 @@ exports.initializeRoom = function initializeRoom(database) {
 
 // 書き込み
 exports.writeRoomData = function writeRoomData(roomId, name) {
-    console.log('function came');
-    db.ref('room/' + roomId).set({ //setじゃなくてpushでもできる
+    console.log('wrote room');
+    db.ref('Room/' + roomId).set({ //setじゃなくてpushでもできる
         name : name
     });
 }
 
 exports.readRoomData = function readUserData() {
-    db.ref("room/").once("value", function(snapshot) {
+    db.ref("Room/").once("value", function(snapshot) {
       return snapshot.val();
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
@@ -23,7 +23,9 @@ exports.readRoomData = function readUserData() {
 
 // discordIdでのユーザー検索
 exports.searchRoomData = function searchDiscordUserData(roomId) {
-    db.ref('user/' + roomId).once("value", function(snapshot) {
+    db.ref('Room/' + roomId).once("value", function(snapshot) {
         return snapshot.val();
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
     });
 }
